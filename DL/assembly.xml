@@ -1,0 +1,18 @@
+<assembly>
+
+    <id>assembly</id>
+
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/python</directory>
+            <outputDirectory>python</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+</assembly>
