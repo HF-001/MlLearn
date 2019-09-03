@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib
 
 import matplotlib.pyplot as plt
-from scipy.stats import skew
+from scipy.stats import skew #偏度
 from scipy.stats.stats import pearsonr
 """
 https://www.kaggle.com/apapiu/regularized-linear-models
@@ -22,23 +22,23 @@ train.head()
 all_data = pd.concat((train.loc[:,'MSSubClass':'SaleCondition'],
                       test.loc[:,'MSSubClass':'SaleCondition']))
 
-matplotlib.rcParams['figure.figsize'] = (12.0, 6.0)
+matplotlib.rcParams['figure.figsize'] = (12.0, 6.0) # 自定义画图参数
 prices = pd.DataFrame({"price":train["SalePrice"], "log(price + 1)":np.log1p(train["SalePrice"])})
-prices.hist()
+prices.hist() # 画直方图，看出数据大体的区间分布
 
 #log transform the target:
 train["SalePrice"] = np.log1p(train["SalePrice"])
 
 #log transform skewed numeric features:
-numeric_feats = all_data.dtypes[all_data.dtypes != "object"].index
+numeric_feats = all_data.dtypes[all_data.dtypes != "object"].index # 非object类型的数据行索引
 
-skewed_feats = train[numeric_feats].apply(lambda x: skew(x.dropna())) #compute skewness
+skewed_feats = train[numeric_feats].apply(lambda x: skew(x.dropna())) # compute skewness 计算偏度
 skewed_feats = skewed_feats[skewed_feats > 0.75]
 skewed_feats = skewed_feats.index
 
 all_data[skewed_feats] = np.log1p(all_data[skewed_feats])
 
-all_data = pd.get_dummies(all_data)
+all_data = pd.get_dummies(all_data) # one_hot编码
 
 #filling NA's with the mean of the column:
 all_data = all_data.fillna(all_data.mean())
@@ -97,7 +97,7 @@ dtrain = xgb.DMatrix(X_train, label = y)
 dtest = xgb.DMatrix(X_test)
 
 params = {"max_depth":2, "eta":0.1}
-model = xgb.cv(params, dtrain,  num_boost_round=500, early_stopping_rounds=100)
+model = xgb.cv(params, dtrain,  num_boost_round=500, early_stopping_rounds=100) #交叉验证
 
 model.loc[30:,["test-rmse-mean", "train-rmse-mean"]].plot()
 
@@ -126,13 +126,13 @@ X_tr, X_val, y_tr, y_val = train_test_split(X_train, y, random_state = 3)
 X_tr.shape
 X_tr
 
-model = Sequential()
+model = Sequential() #构建网络模型的方法之一
 #model.add(Dense(256, activation="relu", input_dim = X_train.shape[1]))
-model.add(Dense(1, input_dim = X_train.shape[1], W_regularizer=l1(0.001)))
+model.add(Dense(1, input_dim = X_train.shape[1], W_regularizer=l1(0.001))) #添加网络层
 
-model.compile(loss = "mse", optimizer = "adam")
+model.compile(loss = "mse", optimizer = "adam") #添加目标函数
 
-model.summary()
+model.summary() #输出参数信息
 
 hist = model.fit(X_tr, y_tr, validation_data = (X_val, y_val))
 
