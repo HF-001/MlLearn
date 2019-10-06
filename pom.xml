@@ -11,6 +11,7 @@
     <modules>
         <module>ML</module>
         <module>DL</module>
+        <module>kaggle</module>
     </modules>
 
 
